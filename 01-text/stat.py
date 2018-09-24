@@ -64,7 +64,14 @@ def print_composers(counter):
 
 def print_centuries(counter):
     for item in counter:
-        print(str(item) + 'th century: ' + str(counter[item]))
+        ending = 'th'
+        if str(item).endswith('1'):
+            ending = 'st'
+        if str(item).endswith('2'):
+            ending = 'nd'
+        if str(item).endswith('3'):
+            ending = 'rd'
+        print(str(item) + ending + ' century: ' + str(counter[item]))
 
 
 def main():
