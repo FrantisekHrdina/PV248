@@ -267,4 +267,5 @@ def load(file_path):
         if tmp_print is not None:
             prints_list.append(tmp_print)
 
+        prints_list.sort(key=lambda x: int(x.print_id), reverse=False)
     return prints_list
