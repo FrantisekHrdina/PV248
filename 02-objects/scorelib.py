@@ -129,8 +129,7 @@ def load(file_path):
     file = file.read()
 
     prints_list = list()
-    test = file.split("\n\n")
-    last = test[-1]
+
     for line in file.split("\n\n"):
         if line == '':
             break
