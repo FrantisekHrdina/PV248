@@ -236,18 +236,53 @@ def load(file_path):
         ''' Parsing editors '''
         editors = []
         if editors_match is not None:
-            editors_splitted = str(editors_match.group(1)).split(",")
+            editors_splitted_semicolon = str(editors_match.group(1)).split(";")
+            editors_splitted_comma = str(editors_match.group(1)).split(",")
 
-            if len(editors_splitted) == 1:
+            # Editors contains only one editor instance consists of one word
+            if ';' not in editors_match.group(1) and ',' not in editors_match.group(1):
                 tmp_editor = Person()
-                tmp_editor.name = editors_splitted[0].strip()
+                tmp_editor.name = editors_match.group(1).strip()
                 editors.append(tmp_editor)
+
             else:
-                for i in range(0, len(editors_splitted), 2):
-                    tmp_editor = Person()
-                    tmp_editor.name = editors_splitted[i] + "," + editors_splitted[i+1]
-                    tmp_editor.name = tmp_editor.name.strip()
-                    editors.append(tmp_editor)
+                # Editors contains editors separated by semicolon
+                if ';' in editors_match.group(1):
+                    for i in range(0, len(editors_splitted_semicolon)):
+                        tmp_editor = Person()
+                        tmp_editor.name = editors_splitted_semicolon[i]
+                        tmp_editor.name = tmp_editor.name.strip()
+                        editors.append(tmp_editor)
+                # Editors contains editors separated by comma, and there is firstname and surname separated by coma too
+                else:
+                    for i in range(0, len(editors_splitted_comma), 2):
+                        tmp_editor = Person()
+                        tmp_editor.name = editors_splitted_comma[i] + "," + editors_splitted_comma[i+1]
+                        tmp_editor.name = tmp_editor.name.strip()
+                        editors.append(tmp_editor)
+
+            # editors_splitted_semicolon = str(editors_match.group(1).split(";"))
+            # editors_splitted_comma = str(editors_match.group(1)).split(",")
+            #
+            #
+            # # Editors contains only one editor instance
+            # if len(editors_splitted_semicolon) == 1 and len(editors_splitted_comma) == 1:
+            #     tmp_editor = Person()
+            #     tmp_editor.name = editors_match.group(1).strip()
+            #     editors.append(tmp_editor)
+            # else:
+            #     if len(editors_splitted_semicolon) > len(editors_splitted_comma):
+            #         for i in range(0, len(editors_splitted_semicolon)):
+            #             tmp_editor = Person()
+            #             tmp_editor.name = editors_splitted_semicolon[i]
+            #             tmp_editor.name = tmp_editor.name.split()
+            #             editors.append(tmp_editor)
+            #     else:
+            #         for i in range(0, len(editors_splitted_comma), 2):
+            #             tmp_editor = Person()
+            #             tmp_editor.name = editors_splitted_comma[i] + "," + editors_splitted_comma[i+1]
+            #             tmp_editor.name = tmp_editor.name.strip()
+            #             editors.append(tmp_editor)
 
         tmp_edition.authors = editors
 
