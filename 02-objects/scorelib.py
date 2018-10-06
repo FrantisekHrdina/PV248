@@ -131,6 +131,8 @@ def load(file_path):
     prints_list = list()
 
     for line in file.split("\n\n"):
+        if line == '':
+            break
         print_id_match = print_id_regex.search(line)
         partiture_match = partiture_regex.search(line)
         composers_match = composer_regex.search(line)
@@ -260,29 +262,6 @@ def load(file_path):
                         tmp_editor.name = editors_splitted_comma[i] + "," + editors_splitted_comma[i+1]
                         tmp_editor.name = tmp_editor.name.strip()
                         editors.append(tmp_editor)
-
-            # editors_splitted_semicolon = str(editors_match.group(1).split(";"))
-            # editors_splitted_comma = str(editors_match.group(1)).split(",")
-            #
-            #
-            # # Editors contains only one editor instance
-            # if len(editors_splitted_semicolon) == 1 and len(editors_splitted_comma) == 1:
-            #     tmp_editor = Person()
-            #     tmp_editor.name = editors_match.group(1).strip()
-            #     editors.append(tmp_editor)
-            # else:
-            #     if len(editors_splitted_semicolon) > len(editors_splitted_comma):
-            #         for i in range(0, len(editors_splitted_semicolon)):
-            #             tmp_editor = Person()
-            #             tmp_editor.name = editors_splitted_semicolon[i]
-            #             tmp_editor.name = tmp_editor.name.split()
-            #             editors.append(tmp_editor)
-            #     else:
-            #         for i in range(0, len(editors_splitted_comma), 2):
-            #             tmp_editor = Person()
-            #             tmp_editor.name = editors_splitted_comma[i] + "," + editors_splitted_comma[i+1]
-            #             tmp_editor.name = tmp_editor.name.strip()
-            #             editors.append(tmp_editor)
 
         tmp_edition.authors = editors
 
