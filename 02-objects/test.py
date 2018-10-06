@@ -16,6 +16,11 @@ def main():
         item.format()
         print()
 
+    #tmp_print = Print()
+    # tmp_print = prints_list[-1]
+    # print(tmp_print.print_id)
+    # print()
+
 
 if __name__ == '__main__':
     main()
