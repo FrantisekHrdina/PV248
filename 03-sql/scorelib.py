@@ -83,6 +83,7 @@ class Composition:
 
 class Voice:
     def __init__(self):
+        self.number = None
         self.name = None
         self.range = None
 
@@ -122,7 +123,7 @@ def load(file_path):
     composition_year_regex = re.compile(r"Composition Year: (\d{4})")
     edition_regex = re.compile(r"Edition: (.*)")
     editor_regex = re.compile(r"Editor: (.*)")
-    voice_regex = re.compile(r"Voice \d*: (.*)")
+    voice_regex = re.compile(r"Voice (\d*): (.*)")
     incipit_regex = re.compile(r"Incipit: (.*)")
 
     file = open(file_path, 'r', encoding='utf8')
@@ -194,14 +195,15 @@ def load(file_path):
 
             for i in voices_match:
                 tmp_voice = Voice()
-                range_in_voice_regex = re.compile(r"(.+--.+\(.*\)|\w+--\w+)[,|;]\s*(.*)")
-                range_voice = range_in_voice_regex.match(i)
+                tmp_voice.number = i[0]
+                range_in_voice_regex = re.compile(r"(\(.*\).+--.+|.+--.+\(.*\)|\w+--\w+)[,|;]\s*(.*)")
+                range_voice = range_in_voice_regex.match(i[1])
 
                 if range_voice is not None:
                     tmp_voice.name = range_voice.group(2).strip()
                     tmp_voice.range = range_voice.group(1).strip()
                 else:
-                    tmp_voice.name = i.strip()
+                    tmp_voice.name = i[1].strip()
 
                 voices.append(tmp_voice)
 
