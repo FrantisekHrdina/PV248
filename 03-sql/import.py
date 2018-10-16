@@ -110,14 +110,11 @@ def save_edition(cur, edition, score_id):
 
 def save_voices(cur, voices, score_id):
     voices_ids = list()
-    voice_number = 1
 
     for voice in voices:
         cur.execute('INSERT INTO voice (number, range, name, score) VALUES (?, ?, ?, ?)',
-                        (voice_number, voice.range, voice.name, score_id))
+                        (voice.number, voice.range, voice.name, score_id))
         voices_ids.append(cur.lastrowid)
-
-        voice_number = voice_number + 1
 
     return voices_ids
 
@@ -153,9 +150,12 @@ def main():
         print('Example: ')
         print('./import.py scorelib.txt scorelib.dat')
 
-    os.remove(sys.argv[2])
+    # Just for comfortable testing
+    # os.remove(sys.argv[2])
+
     conn = sqlite3.connect(sys.argv[2])
-    #conn.set_trace_callback(print)
+    # For debugging SQL queries
+    # conn.set_trace_callback(print)
 
     cur = conn.cursor()
     # with open('scorelib.sql') as fp:
