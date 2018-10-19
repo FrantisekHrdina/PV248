@@ -182,12 +182,13 @@ def load(file_path):
                     if died_advanced is not None:
                         died = int(died_advanced.group(1))
 
-                tmp_composer = Person()
-                tmp_composer.name = composer_name
-                tmp_composer.born = born
-                tmp_composer.died = died
+                if composer_name != '':
+                    tmp_composer = Person()
+                    tmp_composer.name = composer_name
+                    tmp_composer.born = born
+                    tmp_composer.died = died
 
-                composers.append(tmp_composer)
+                    composers.append(tmp_composer)
 
         ''' Parsing voices '''
         if voices_match is not None:
@@ -202,8 +203,16 @@ def load(file_path):
                 if range_voice is not None:
                     tmp_voice.name = range_voice.group(2).strip()
                     tmp_voice.range = range_voice.group(1).strip()
+
                 else:
                     tmp_voice.name = i[1].strip()
+
+                # Fix: empty strings should not be in database
+                if tmp_voice.name == '':
+                    tmp_voice.name = None
+
+                if tmp_voice.range == '':
+                    tmp_voice.range = None
 
                 voices.append(tmp_voice)
 
@@ -224,6 +233,20 @@ def load(file_path):
         if incipit_match is not None:
             tmp_composition.incipit = incipit_match.group(1).strip()
 
+        # Fix: empty strings should not be in database
+        if tmp_composition.name == '':
+            tmp_composition.name = None
+
+        if tmp_composition.key == '':
+            tmp_composition.key = None
+
+        if tmp_composition.genre == '':
+            tmp_composition.genre = None
+
+        if tmp_composition.incipit == '':
+            tmp_composition.incipit = None
+
+
         tmp_composition.authors = composers
         tmp_composition.voices = voices
 
@@ -231,6 +254,9 @@ def load(file_path):
         tmp_edition = Edition()
         if edition_match is not None:
             tmp_edition.name = edition_match.group(1).strip()
+
+        if tmp_edition.name == '':
+            tmp_edition.name = None
 
         tmp_edition.composition = tmp_composition
 
@@ -242,27 +268,30 @@ def load(file_path):
 
             # Editors contains only one editor instance consists of one word
             if ';' not in editors_match.group(1) and ',' not in editors_match.group(1):
-                tmp_editor = Person()
-                tmp_editor.name = editors_match.group(1).strip()
-                tmp_editor.name = re.sub(r"\(.*\)", '', tmp_editor.name)
-                tmp_editor.name = tmp_editor.name.strip()
-                editors.append(tmp_editor)
+                if editors_match.group(1).strip() != '':
+                    tmp_editor = Person()
+                    tmp_editor.name = editors_match.group(1).strip()
+                    tmp_editor.name = re.sub(r"\(.*\)", '', tmp_editor.name)
+                    tmp_editor.name = tmp_editor.name.strip()
+                    editors.append(tmp_editor)
 
             else:
                 # Editors contains editors separated by semicolon
                 if ';' in editors_match.group(1):
                     for i in range(0, len(editors_splitted_semicolon)):
-                        tmp_editor = Person()
-                        tmp_editor.name = editors_splitted_semicolon[i]
-                        tmp_editor.name = tmp_editor.name.strip()
-                        editors.append(tmp_editor)
+                        if editors_match.group(1).strip() != '':
+                            tmp_editor = Person()
+                            tmp_editor.name = editors_splitted_semicolon[i]
+                            tmp_editor.name = tmp_editor.name.strip()
+                            editors.append(tmp_editor)
                 # Editors contains editors separated by comma, and there is firstname and surname separated by coma too
                 else:
                     for i in range(0, len(editors_splitted_comma), 2):
-                        tmp_editor = Person()
-                        tmp_editor.name = editors_splitted_comma[i] + "," + editors_splitted_comma[i+1]
-                        tmp_editor.name = tmp_editor.name.strip()
-                        editors.append(tmp_editor)
+                        if editors_splitted_comma[i] + "," + editors_splitted_comma[i+1] != '':
+                            tmp_editor = Person()
+                            tmp_editor.name = editors_splitted_comma[i] + "," + editors_splitted_comma[i+1]
+                            tmp_editor.name = tmp_editor.name.strip()
+                            editors.append(tmp_editor)
 
         tmp_edition.authors = editors
 

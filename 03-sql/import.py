@@ -60,7 +60,14 @@ def save_print(cur, print_id, partiture, edition_id):
 
 def save_score(cur, composition):
     params = []
-    params.append(composition.name)
+    #params.append(composition.name)
+
+    if composition.name is None:
+        name_query = 'name is NULL'
+    else:
+        name_query = 'name=?'
+        params.append(composition.name)
+
     if composition.genre is None:
         genre_query = 'genre is NULL'
     else:
@@ -83,7 +90,7 @@ def save_score(cur, composition):
         year_query = 'year=?'
         params.append(composition.year)
 
-    cur.execute('SELECT id FROM score WHERE name=? and ' + genre_query + ' and ' + key_query +
+    cur.execute('SELECT id FROM score WHERE ' + name_query + ' and ' + genre_query + ' and ' + key_query +
                 ' and ' + incipit_query + ' and ' + year_query,
                 (params))
 
@@ -98,7 +105,18 @@ def save_score(cur, composition):
 
 
 def save_edition(cur, edition, score_id):
-    cur.execute('SELECT id FROM edition WHERE name=? and score=?', (edition.name, score_id))
+    params = []
+    #params.append(composition.name)
+
+    if edition.name is None:
+        edition_query = 'name is NULL'
+    else:
+        edition_query = 'name=?'
+        params.append(edition.name)
+
+    params.append(score_id)
+
+    cur.execute('SELECT id FROM edition WHERE ' + edition_query + ' and score=?', (params))
 
     row = cur.fetchone()
 
