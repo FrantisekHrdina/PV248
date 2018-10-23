@@ -5,9 +5,6 @@ import sys
 import json
 
 
-
-
-
 def get_print(cur, print_id):
     tmp_print = {}
     tmp_print['Print Number'] = print_id
@@ -25,7 +22,6 @@ def get_print(cur, print_id):
 
     cur.execute('SELECT name, score, year FROM edition WHERE id=?', (edition_id,))
     edition_db = cur.fetchone()
-
 
     tmp_print['Edition'] = edition_db[0]
     tmp_print['Publication Year'] = edition_db[2]
@@ -82,12 +78,6 @@ def get_print(cur, print_id):
 
         tmp_print['Voice ' + str(voice[0])] = tmp_voice
 
-
-
-
-
-
-
     return tmp_print
 
 
@@ -101,13 +91,13 @@ def get_composers(cur, like_param):
     for i in result:
         composers_names.append(i[0])
 
-
     return composers_names
 
 
 def main():
     conn = sqlite3.connect('scorelib.dat')
-    #conn.set_trace_callback(print)
+    # For debugging SQL
+    # conn.set_trace_callback(print)
     if len(sys.argv) != 2:
         print('Wrong number of arguments')
         print('Example: ')
@@ -131,20 +121,13 @@ def main():
         for i in result:
             print_ids.append(i[0])
 
-
         print_list = list()
         for print_id in print_ids:
             print_list.append(get_print(cur, print_id))
 
-        #print('composer:' + composer)
-        #print(print_list)
         result_json[composer] = print_list
 
-
-
-    print(json.dumps(result_json, ensure_ascii=False, sort_keys=True, indent=4))
-
-
+    print(json.dumps(result_json, ensure_ascii=False, sort_keys=False, indent=4))
 
 
 if __name__ == '__main__':

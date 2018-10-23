@@ -7,6 +7,7 @@ import json
 
 def main():
     conn = sqlite3.connect('scorelib.dat')
+    # For debugging SQL
     # conn.set_trace_callback(print)
     if len(sys.argv) != 2:
         print('Wrong number of arguments')
