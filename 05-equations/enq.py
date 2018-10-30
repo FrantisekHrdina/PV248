@@ -147,6 +147,7 @@ def main():
                 print(str(variables[i]) + ' = ' + str(result[i]), end='')
                 if i + 1 != len(result):
                     print(',',end=' ')
+            print()
 
         if rank_A < dimension:
             print('solution space dimension: ' + str(dimension - rank_A))
