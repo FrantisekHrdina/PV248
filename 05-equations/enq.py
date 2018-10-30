@@ -90,11 +90,10 @@ def main():
             left_side_operands = left_side.split(' ')
 
             tmp_dict = {}
-            left_side_dict = list()
-            regex = re.compile(r'([\+-?]\d*)*(\w+)')
+            coeffs_vars_regex = re.compile(r'([\+-?]\d*)*(\w+)')
 
             for operand in left_side_operands:
-                match = regex.match(operand)
+                match = coeffs_vars_regex.match(operand)
 
                 if match is not None:
                     value = 1
@@ -111,31 +110,14 @@ def main():
 
             equations_list.append(equation)
 
-    #linalg.solve(result, y)
-
-    # Print loaded equations
-    # for equation in equations_list:
-    #     print('Right side: ' + str(equation[1]))
-    #     print(equation[0])
-
     set_zeroes_to_missing_variables(equations_list)
-    # print(get_right_coefficients(equations_list))
-    # print(get_left_coefficients(equations_list))
-
     a = get_left_coefficients(equations_list)
     b = get_right_coefficients(equations_list)
 
     rank_A = linalg.matrix_rank(a)
-    # print('rank:')
-    # print(rank_A)
-    # print(get_matrix(equations_list))
     rank_entire_matrix = linalg.matrix_rank(get_matrix(equations_list))
 
     dimension = get_dimension(equations_list)
-
-    # print('dimension: ' + str(dimension))
-    # print(rank_A)
-
 
     if rank_A == rank_entire_matrix:
         if rank_A == dimension:
@@ -154,11 +136,6 @@ def main():
     else:
         print('no solution')
 
-
-
-
-
-    #print(np.allclose(np.dot(a, result), b))
 
 if __name__ == '__main__':
     main()
