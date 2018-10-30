@@ -101,12 +101,44 @@ def save_score(cur, composition):
               (composition.name, composition.genre, composition.key, composition.incipit, composition.year))
         return cur.lastrowid
     else:
-        return row[0]
+        tmp_composition = scorelib.Composition()
+        tmp_composition.name = composition.name
+        tmp_composition.genre = composition.genre
+        tmp_composition.key = composition.key
+        tmp_composition.incipit = composition.incipit
+        tmp_composition.year = composition.year
+
+        cur.execute('SELECT name from person JOIN score_author ON person.id=score_author.composer WHERE score=?', (row[0],))
+
+        result = cur.fetchall()
+        if result is not None:
+            for composer in result:
+                tmp_composer = scorelib.Person()
+                tmp_composer.name = composer[0]
+                tmp_composition.authors.append(tmp_composer)
+
+        cur.execute('SELECT number, name, range from voice WHERE score=?', (row[0],))
+
+        result = cur.fetchall()
+
+        if result is not None:
+            for i in range(0, len(result)):
+                tmp_voice = scorelib.Voice()
+                tmp_voice.number = int(result[i][0])
+                tmp_voice.name = result[i][1]
+                tmp_voice.range = result[i][2]
+                tmp_composition.voices.append(tmp_voice)
+
+        if composition.__eq__(tmp_composition):
+            return row[0]
+        else:
+            cur.execute('INSERT INTO score (name, genre, key, incipit, year) VALUES (?, ?, ?, ?, ?)',
+                        (composition.name, composition.genre, composition.key, composition.incipit, composition.year))
+            return cur.lastrowid
 
 
 def save_edition(cur, edition, score_id):
     params = []
-    #params.append(composition.name)
 
     if edition.name is None:
         edition_query = 'name is NULL'
@@ -125,7 +157,26 @@ def save_edition(cur, edition, score_id):
              (edition.name, score_id))
         return cur.lastrowid
     else:
-        return row[0]
+        tmp_edition = scorelib.Edition()
+        tmp_edition.name = edition.name
+        tmp_edition.composition = edition.composition
+
+        cur.execute('SELECT name from person JOIN edition_author ON person.id=edition_author.editor WHERE edition=?',
+                    (row[0],))
+
+        result = cur.fetchall()
+        if result is not None:
+            for editor in result:
+                tmp_editor = scorelib.Person()
+                tmp_editor.name = editor[0]
+                tmp_edition.authors.append(tmp_editor)
+
+        if edition.__eq__(tmp_edition):
+            return row[0]
+        else:
+            cur.execute('INSERT INTO edition (name, score) VALUES (?, ?)',
+                        (edition.name, score_id))
+            return cur.lastrowid
 
 
 def save_voices(cur, voices, score_id):

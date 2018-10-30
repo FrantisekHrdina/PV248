@@ -69,6 +69,20 @@ class Edition:
         self.authors = []
         self.name = None
 
+    def __eq__(self, other):
+        if self.name != other.name or self.composition != other.composition:
+            return False
+
+        if len(self.authors) != len(other.authors):
+            return False
+
+        for i in range(0, len(self.authors)):
+            if self.authors[i].name != other.authors[i].name:
+                return False
+
+        return True
+
+
 
 class Composition:
     def __init__(self):
@@ -79,6 +93,28 @@ class Composition:
         self.year = None
         self.voices = []
         self.authors = []
+
+
+    def __eq__(self, other):
+        if self.name != other.name or self.incipit != other.incipit or self.key != other.key\
+                or self.genre != other.genre or self.year != other.year:
+            return False
+
+        if len(self.voices) != len(other.voices):
+            return False
+
+        if len(self.authors) != len(other.authors):
+            return False
+
+        for i in range(0, len(self.voices)):
+            if self.voices[i].number != other.voices[i].number or self.voices[i].name != other.voices[i].name or self.voices[i].range != other.voices[i].range:
+                return False
+
+        for i in range(0, len(self.authors)):
+            if self.authors[i].name != other.authors[i].name:
+                return False
+
+        return True
 
 
 class Voice:
@@ -196,7 +232,7 @@ def load(file_path):
 
             for i in voices_match:
                 tmp_voice = Voice()
-                tmp_voice.number = i[0]
+                tmp_voice.number = int(i[0])
                 range_in_voice_regex = re.compile(r"(\(.*\).+--.+|.+--.+\(.*\)|\w+--\w+)[,|;]\s*(.*)")
                 range_voice = range_in_voice_regex.match(i[1])
 
