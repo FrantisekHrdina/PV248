@@ -34,13 +34,11 @@ def get_three_max_peaks(data, start, end):
     peaks.sort(key=itemgetter(1), reverse=True)
 
     clusters = []
-    # For merging peaks that are next to eeach other in range 1Hz
+    # For merging peaks that are next to each other in range 1Hz
     merge_border = 1
 
     # Sorted by frequencies ASC
     peaks.sort(key=itemgetter(0), reverse=False)
-
-    # print(peaks)
 
     i = 0
     while i < len(peaks):
@@ -78,45 +76,6 @@ def get_three_max_peaks(data, start, end):
             break
 
     return three_max_clusters
-
-
-    # for peak_freq, peak_value in peaks:
-    #     # if clustered_peaks.__len__() == 0:
-    #     #     clustered_peaks.append((peak_freq, peak_value))
-    #     #     value = clustered_peaks.sort(key=itemgetter(0), reverse=True)
-    #     # else:
-    #     #     if np.abs(clustered_peaks[-1][0] - peak_freq) <= merge_border:
-    #     #         if clustered_peaks[-1][1] < peak_value:
-    #     #             clustered_peaks[-1] = (peak_freq, peak_value)
-    #     #     else:
-    #     #         clustered_peaks.append((peak_freq, peak_value))
-    #     #         value = clustered_peaks.sort(key=itemgetter(0), reverse=True)
-    #
-    #     if clustered_peaks.__len__() == 0:
-    #         clustered_peaks.append((peak_freq, peak_value))
-    #     elif clustered_peaks.__len__() == 1:
-    #         if np.abs(clustered_peaks[-1][0] - peak_freq) <= merge_border:
-    #             if clustered_peaks[-1][1] < peak_value:
-    #                 clustered_peaks[-1] = (peak_freq, peak_value)
-    #         else:
-    #             clustered_peaks.append((peak_freq, peak_value))
-    #
-    #     elif clustered_peaks.__len__() == 2:
-    #         if np.abs(clustered_peaks[-1][0] - peak_freq) <= merge_border:
-    #             if clustered_peaks[-1][1] < peak_value:
-    #                 clustered_peaks[-1] = (peak_freq, peak_value)
-    #
-    #         elif np.abs(clustered_peaks[-2][0] - peak_freq) <= merge_border:
-    #             if clustered_peaks[-2][1] < peak_value:
-    #                 clustered_peaks[-2] = (peak_freq, peak_value)
-    #
-    #         else:
-    #             clustered_peaks.append((peak_freq, peak_value))
-    #
-    #     if clustered_peaks.__len__() == 3:
-    #         break
-    #
-    # return clustered_peaks
 
 
 def get_freqs_from_peaks_array(peaks):
@@ -162,6 +121,7 @@ def count_segments(sliding_windows):
             next_win = sliding_windows[i + 2]
             i += 1
 
+        # If last or two items
         if i + 2 == windows_count:
             if windows_in_same_segment_check(sliding_windows[i], sliding_windows[i + 1]):
                 tmp_segment = (start / 10, (end + 2) / 10, get_freqs_from_peaks_array(sliding_windows[i]))
@@ -183,13 +143,6 @@ def count_segments(sliding_windows):
 
 def print_segments(segments, base_a4_freq):
     for segment in segments:
-        # print('{0}-{1}'.format(segment[0], segment[1]), end='')
-        # segment[2].sort(key=int, reverse=False)
-        # for pitch_freq in segment[2]:
-        #     print(' ' + get_pitch_from_freq(pitch_freq, base_a4_freq), end='')
-        # print()
-        #
-
         if segment[2].__len__() != 0:
             print('{0}-{1}'.format(segment[0], segment[1]), end='')
             segment[2].sort(key=int, reverse=False)
@@ -202,12 +155,7 @@ def get_pitch_from_freq(frequency, base_a4_freq):
     C0 = base_a4_freq * 2 ** (-4.75)
     pitches = ['c', 'cis', 'd', 'es', 'e', 'f', 'fis', 'g', 'gis', 'a', 'bes', 'b']
 
-
-    # cents = 1200 * (log(frequency/base_a4_freq)/log(2))
-
     diff_in_steps = round(12* log2(frequency/C0))
-
-    # h2 = 12* log2(frequency/C0)
 
     note_frequency = 2 ** (diff_in_steps * 100 / 1200) * C0
 
@@ -272,8 +220,8 @@ def main():
 
     total_samples = num_frames * num_channels
 
+    # Print lenght of the wav
     # print(num_frames/sample_rate)
-
 
     # format for unsigned
     #fmt = "%iB" % total_samples
@@ -288,12 +236,8 @@ def main():
         tmp_data = stereo_to_mono(data)
         data = tmp_data
 
-    windows_count = len(data) // sample_rate
-
-    sample_rate = sample_rate
-
-    end = sample_rate
     start = 0
+    end = sample_rate
     step = sample_rate // 10
 
     sliding_windows = []
@@ -303,14 +247,7 @@ def main():
         end += step
 
     segments = count_segments(sliding_windows)
-
     print_segments(segments, base_a4_freq)
-
-    # print(get_pitch_from_freq(448, base_a4_freq))
-    # print(get_pitch_from_freq(19900, base_a4_freq))
-    # print(get_pitch_from_freq(115, base_a4_freq))
-    # print(get_pitch_from_freq(842, base_a4_freq))
-    # print(get_pitch_from_freq(20, base_a4_freq))
 
 
 if __name__ == '__main__':
