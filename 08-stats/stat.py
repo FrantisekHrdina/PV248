@@ -22,10 +22,6 @@ def precount_columns(pandas_data):
         if regex_match is not None:
             deadlines.append(regex_match.group(0))
 
-            date = regex_match.group(1)
-            ex = regex_match.group(2)
-
-            # if
             if regex_match.group(1) not in dates:
                 dates[regex_match.group(1)] = [regex_match.group(2)]
             else:
@@ -45,28 +41,25 @@ def get_deadlines_stats(pandas_data, deadlines):
     for deadline in deadlines:
         deadlines_dict[deadline] = count_stats_for_column(pandas_data, deadline)
 
-
     return deadlines_dict
 
 
 def get_dates_stats(pandas_data, dates):
     dates_dict = {}
     for date in dates.items():
-        # print(date[0])
         tmp_dict = {}
 
         columns = []
         for j in date[1]:
             columns.append(date[0] + '/' + j)
 
-        sum = 0
+        tmp_sum = 0
         for j in columns:
-            sum += pandas_data[j]
+            tmp_sum += pandas_data[j]
 
-        pandas_data[date[0]] = sum
+        pandas_data[date[0]] = tmp_sum
 
         dates_dict[date[0]] = count_stats_for_column(pandas_data, date[0])
-
 
     return dates_dict
 
@@ -80,11 +73,11 @@ def get_exercises_stats(pandas_data, exercises):
         for j in exercise[1]:
             columns.append(j + '/' + exercise[0])
 
-        sum = 0
+        tmp_sum = 0
         for j in columns:
-            sum += pandas_data[j]
+            tmp_sum += pandas_data[j]
 
-        pandas_data[exercise[0]] = sum
+        pandas_data[exercise[0]] = tmp_sum
 
         exercises_dict[exercise[0]] = count_stats_for_column(pandas_data, exercise[0])
 
@@ -135,4 +128,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
