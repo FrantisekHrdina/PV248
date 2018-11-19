@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
-from datetime import date, timedelta, datetime
-from math import ceil
-from operator import itemgetter
 
+from datetime import date, timedelta, datetime
 import pandas as pd
 import sys
 import re
@@ -51,33 +49,20 @@ def precount_columns(pandas_data):
 
 
 def points_predictor(student_stats, dates):
-    # x_dates = []
-    # x_dates.append(0)
-    # x_dates.extend(np.arange(8, 7 * len(dates) + 2, 7))
-    #
-    # print(x_dates)
-
     # Start date is the begging of the semester
     start_date = datetime.strptime('2018-09-17', '%Y-%m-%d').date()
 
     y_points = []
     y_current_sum = 0
-    #y_points.append(0)
 
     # generate x
     x_dates = []
-    #x_dates.append(0)
-
 
     for date_i in dates.items():
         tmp_date = datetime.strptime(date_i[0], '%Y-%m-%d').date()
         diff = tmp_date - start_date
         x_dates.append(diff.days)
 
-    # print(x_dates)
-    #TODO setřídit data podle datumů
-    #dates = sorted(dates, key=dates.__getitem__)
-    # df = df.reindex(sorted(df.columns), axis=1)
     for date_i in dates.items():
         columns = []
 
@@ -92,34 +77,17 @@ def points_predictor(student_stats, dates):
         y_points.append(y_current_sum + sum)
         y_current_sum += sum
 
-
-    # print(y_points)
-    # A = np.array([x_dates, np.ones(x_dates.__len__())])
-
-
-    sum_xy=0
-    sum_x_square =0
+    sum_xy = 0
+    sum_x_square = 0
     for i in range(0, len(x_dates)):
         sum_xy += x_dates[i] * y_points[i]
         sum_x_square += x_dates[i] * x_dates[i]
 
-    # print(sum_xy/sum_x_square)
-
     k_slope = sum_xy / sum_x_square
 
-    # y = kx + q
-
-    # result = np.linalg.lstsq(A.T, y_points, rcond=None)[0]
-    #
-    # k_slope = result[0]
-
-    # q shift should be ignored according to the assignment
-    # q_shift = result[1]
-
     if k_slope != 0:
-        q_shift = 0
-        x_points_16 = (16 - q_shift) / k_slope
-        x_points_20 = (20 - q_shift) / k_slope
+        x_points_16 = 16 / k_slope
+        x_points_20 = 20 / k_slope
 
         date_for_16_points = start_date + timedelta(x_points_16)
         date_for_20_points = start_date + timedelta(x_points_20)
@@ -179,11 +147,11 @@ def main():
         for j in exercise[1]:
             columns.append(j + '/' + exercise[0])
 
-        sum = 0
+        tmp_sum = 0
         for j in columns:
-            sum += pandas_data[j]
+            tmp_sum += pandas_data[j]
 
-        pandas_data[exercise[0]] = sum
+        pandas_data[exercise[0]] = tmp_sum
 
     student_id = sys.argv[2]
 
@@ -210,8 +178,6 @@ def main():
         student_stats = pandas_data.loc[pandas_data['student'] == int(student_id)]
         output = prepare_json(student_stats, dates, exercises_list)
         print_output(output)
-
-
 
 
 if __name__ == '__main__':
