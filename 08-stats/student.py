@@ -131,7 +131,7 @@ def main():
     if sys.argv.__len__() != 3:
         print('Wrong number of arguments')
         print('Example: ')
-        print('./stat.py input.txt deadlines')
+        print('./student.py points.csv [student_id | average]')
         sys.exit(1)
 
     pandas_data = pd.read_csv(sys.argv[1], delimiter=',', skipinitialspace=True)
