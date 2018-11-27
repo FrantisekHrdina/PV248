@@ -42,7 +42,7 @@ class Handler(BaseHTTPRequestHandler):
             response['code'] = 'timeout'
 
         finally:
-            json_response = str(json.dumps(response))
+            json_response = str(json.dumps(response, ensure_ascii=False))
             json_response = bytes(json_response, 'utf-8')
             self.wfile.write(json_response)
             self.do_HEAD()
@@ -105,7 +105,7 @@ class Handler(BaseHTTPRequestHandler):
                 response['code'] = 'timeout'
 
             finally:
-                json_response = str(json.dumps(response))
+                json_response = str(json.dumps(response, ensure_ascii=False))
                 json_response = bytes(json_response, 'utf-8')
                 self.wfile.write(json_response)
 
