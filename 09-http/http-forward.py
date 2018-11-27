@@ -24,7 +24,9 @@ class Handler(BaseHTTPRequestHandler):
 
         #fwd_headers['Accept-Encoding'] = 'identity'
 
-        req = urllib.request.Request(url='http://' + TARGET, data=None, method='GET', headers=fwd_headers)
+
+        path_and_params = self.requestline.split(' ')[1]
+        req = urllib.request.Request(url='http://' + TARGET + path_and_params, data=None, method='GET', headers=fwd_headers)
 
         response = {}
         try:
