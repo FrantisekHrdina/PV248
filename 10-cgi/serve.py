@@ -20,7 +20,6 @@ async def handler(request):
     if os.path.isdir(DIR + request.url.path):
         return web.Response(status=403, headers=headers)
 
-
     if request.headers.get("Authorization") is None:
         auth_type = ''
     else:
@@ -54,7 +53,7 @@ async def handler(request):
 
     os.putenv('CONTENT_LENGTH', str(content_length))
 
-    content = 0
+    content = None
     if content_length > 0:
         content = await request.text()
 
@@ -73,12 +72,12 @@ async def handler(request):
             p.stdin.close()
 
         data = await p.stdout.read()
-        print(data.decode('utf-8'))
+        #print(data.decode('utf-8'))
     else:
         p = await asyncio.create_subprocess_shell('cat ' + DIR + script_path, stdout=asyncio.subprocess.PIPE)
         data = await p.stdout.read()
 
-        print(data.decode('utf-8'))
+        #print(data.decode('utf-8'))
 
     return web.Response(headers=headers, text=data.decode('utf-8'))
 
