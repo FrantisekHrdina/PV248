@@ -22,7 +22,7 @@ class Handler(BaseHTTPRequestHandler):
         if 'Host' in fwd_headers:
             del fwd_headers['Host']
 
-        #fwd_headers['Accept-Encoding'] = 'identity'
+        fwd_headers['Accept-Encoding'] = 'identity'
 
 
         path_and_params = self.requestline.split(' ')[1]
@@ -89,13 +89,13 @@ class Handler(BaseHTTPRequestHandler):
             response['code'] = 'invalid json'
 
         if response['code'] != 'invalid json':
-            req = urllib.request.Request(url=url, method=type)
+            headers['Accept-Encoding'] = 'identity'
+            req = urllib.request.Request(url=url, method=type, headers=headers, data=bytes(content, 'utf-8'))
 
             try:
                 with urllib.request.urlopen(req, timeout=timeout) as r:
                     response['code'] = r.status
                     response['headers'] = dict(r.headers._headers)
-                    #response['headers']['Accept-Encoding'] = 'identity'
 
                     response_content = r.read()
 
@@ -103,7 +103,8 @@ class Handler(BaseHTTPRequestHandler):
                         response['json'] = json.loads(response_content.decode('utf-8'))
                     else:
                         response['content'] = response_content.decode('utf-8')
-            except Exception:
+            except Exception as ex:
+                # print(ex)
                 response['code'] = 'timeout'
 
         json_response = str(json.dumps(response, ensure_ascii=False, indent=4))
