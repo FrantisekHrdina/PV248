@@ -90,7 +90,13 @@ class Handler(BaseHTTPRequestHandler):
 
         if response['code'] != 'invalid json':
             headers['Accept-Encoding'] = 'identity'
-            req = urllib.request.Request(url=url, method=type, headers=headers, data=bytes(content, 'utf-8'))
+
+            if content is None:
+                data = None
+            else:
+                data = bytes(content, 'utf-8')
+
+            req = urllib.request.Request(url=url, method=type, headers=headers, data=data)
 
             try:
                 with urllib.request.urlopen(req, timeout=timeout) as r:
