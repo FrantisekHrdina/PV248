@@ -83,13 +83,6 @@ async def handler(request):
     return web.Response(headers=headers, text=data.decode('utf-8'))
 
 
-@asyncio.coroutine
-async def post_handler(request):
-    print('POST')
-
-    return web.Response()
-
-
 def main():
     global PORT
     global DIR
