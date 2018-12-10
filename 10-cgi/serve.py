@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
+
 import os
 import sys
-
 import aiohttp
 import asyncio
 import subprocess
 from subprocess import PIPE
-
 from aiohttp import web
 
 
@@ -29,6 +28,10 @@ async def handler(request):
         content_type = ''
     else:
         content_type = request.content_type
+
+    for i in request.headers:
+        header_field_name = i.upper().replace('-', '_')
+        os.putenv('HTTP_' + header_field_name, request.headers[i])
 
     os.putenv('AUTH_TYPE', auth_type)
     # os.putenv('CONTENT_LENGTH', )
@@ -79,10 +82,14 @@ async def handler(request):
 
         #print(data.decode('utf-8'))
 
-    return web.Response(headers=headers, text=data.decode('utf-8'))
+    body_to_send = data.decode('utf-8').split("\n\n")
+    # response = web.Response(headers=headers, text=data.decode('utf-8'))
+    # print(response)
+    return web.Response(headers=headers, text=body_to_send[1])
 
 
 def main():
+    # logging.basicConfig(level=logging.DEBUG)
     global PORT
     global DIR
     PORT = int(sys.argv[1])
@@ -96,3 +103,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
