@@ -11,12 +11,6 @@ from aiohttp import web
 
 from aiohttp.abc import AbstractAccessLogger
 
-class AccessLogger(AbstractAccessLogger):
-
-    def log(self, request, response, time):
-        self.logger.info('test')
-        print('test')
-
 
 @asyncio.coroutine
 async def handler(request):
@@ -104,10 +98,10 @@ def main():
     PORT = int(sys.argv[1])
     DIR = sys.argv[2]
 
-    my_server = web.Application(logger=AccessLogger)
+    my_server = web.Application()
     my_server.router.add_route('GET', '/{tail:.*}', handler)
     my_server.router.add_route('POST', '/{tail:.*}', handler)
-    web.run_app(my_server, host='localhost', port=PORT )
+    web.run_app(my_server, host='localhost', port=PORT)
 
 
 if __name__ == '__main__':
