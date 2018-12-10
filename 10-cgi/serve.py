@@ -1,15 +1,12 @@
 #!/usr/bin/env python3
+
 import os
 import sys
-
 import aiohttp
 import asyncio
 import subprocess
 from subprocess import PIPE
-
 from aiohttp import web
-
-from aiohttp.abc import AbstractAccessLogger
 
 
 @asyncio.coroutine
