@@ -34,7 +34,6 @@ async def handler(request):
         os.putenv('HTTP_' + header_field_name, request.headers[i])
 
     os.putenv('AUTH_TYPE', auth_type)
-    # os.putenv('CONTENT_LENGTH', )
     os.putenv('CONTENT_TYPE', content_type)
     os.putenv('GATEWAY_INTERFACE', 'CGI/1.1')
     os.putenv('PATH_INFO', request.url.raw_path)
@@ -75,21 +74,16 @@ async def handler(request):
             p.stdin.close()
 
         data = await p.stdout.read()
-        #print(data.decode('utf-8'))
+        body_to_send = data.decode('utf-8').split("\n\n")[1]
     else:
         p = await asyncio.create_subprocess_shell('cat ' + DIR + script_path, stdout=asyncio.subprocess.PIPE)
         data = await p.stdout.read()
+        body_to_send = data.decode('utf-8')
 
-        #print(data.decode('utf-8'))
-
-    body_to_send = data.decode('utf-8').split("\n\n")
-    # response = web.Response(headers=headers, text=data.decode('utf-8'))
-    # print(response)
-    return web.Response(headers=headers, text=body_to_send[1])
+    return web.Response(headers=headers, text=body_to_send)
 
 
 def main():
-    # logging.basicConfig(level=logging.DEBUG)
     global PORT
     global DIR
     PORT = int(sys.argv[1])
@@ -103,5 +97,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
