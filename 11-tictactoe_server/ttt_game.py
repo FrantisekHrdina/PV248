@@ -13,7 +13,6 @@ class Game:
         self.next = 1 # Player 1 plays first
         self.has_second_player_joined = False
 
-
     def print_board(self):
         for i in range(0, HEIGHT):
             for j in range(0, WIDTH):
@@ -21,21 +20,26 @@ class Game:
             print()
 
     def are_all_boxes_filled(self):
-        #check rows
-
         for i in range(0, HEIGHT):
             for j in range(0, WIDTH):
                 if self.board[i][j] == 0:
                     return False
 
-        self.winner=0
         return True
+
+    def available_for_list(self):
+        filled = 0
+        for i in range(0, HEIGHT):
+            for j in range(0, WIDTH):
+                if self.board[i][j] != 0:
+                    filled += 1
+
+        return filled == 1
 
     def set_winner(self):
         # check rows
         for i in range(0, HEIGHT):
             if 0 != self.board[i][0] == self.board[i][1] == self.board[i][2]:
-
                 self.winner = self.board[i][0]
                 return
 
@@ -64,23 +68,21 @@ class Game:
         else:
             last_played = 1
 
-
         winner = 'game is not finished yet'
         if self.winner is not None:
             winner = self.winner
 
-        round = 0
+        last_round = 0
 
         for i in range(0, HEIGHT):
             for j in range(0, WIDTH):
                 if self.board[i][j] != 0:
-                    round += 1
+                    last_round += 1
 
-        print('-----Round ' + str(round) + '-----')
+        print('-----Round ' + str(last_round) + '-----')
         print('Last played:' + str(last_played))
         print('Board: ')
         self.print_board()
         print('Next player: ' + str(self.next))
         print('Winner: ' + str(winner))
         print()
-

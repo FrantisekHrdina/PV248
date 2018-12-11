@@ -11,12 +11,8 @@ from aiohttp import web
 async def start_handler(request):
     if 'name' not in request.query.keys():
         name = ''
-        # return web.Response(status=500, text='bad request, missing key name')
     else:
         name = request.query['name']
-
-    # if name == '':
-    #     return web.Response(status=500, text='bad request, empty name not allowed')
 
     new_game = ttt_game.Game()
     new_game.name = name
@@ -24,12 +20,7 @@ async def start_handler(request):
 
     games.append(new_game)
 
-    response = {}
-    response['id'] = new_game.id
-
-    # Testing
-    # if new_game.id == 0:
-    #     await asyncio.sleep(10)
+    response = {'id': new_game.id}
 
     return web.Response(status=200, text=json.dumps(response, indent=4))
 
@@ -38,19 +29,19 @@ async def start_handler(request):
 async def status_handler(request):
     response = {}
     if 'game' not in request.query.keys():
-        return web.Response(status=400)
-
+        response = {'message': 'game was not specified'}
+        return web.Response(status=400, text=json.dumps(response, indent=4))
 
     try:
         game_id = int(request.query['game'])
     except ValueError:
-        #response['message'] = 'game must be digit'
-        return web.Response(status=400)
+        response = {'message': 'game identifier must be a digit'}
+
+        return web.Response(status=400, text=json.dumps(response, indent=4))
 
     if game_id >= games.__len__():
-        # response['status'] = 'bad'
-        # response['message'] = 'bad request, game with this id does not exist'
-        return web.Response(status=404)
+        response = {'message': 'game with this id does not exist'}
+        return web.Response(status=404, text=json.dumps(response, indent=4))
 
     game = games[int(game_id)]
 
@@ -83,8 +74,8 @@ async def play_handler(request):
 
     if x < 0 or x >= ttt_game.HEIGHT or y < 0 or y >= ttt_game.WIDTH:
         response['status'] = 'bad'
-        response['message'] = 'x and y must be in 0 or 1 or 2'
-        return web.Response(status=422, text=json.dumps(response, indent=4))
+        response['message'] = 'x and y must be 0 or 1 or 2'
+        return web.Response(status=200, text=json.dumps(response, indent=4))
 
     if game_id >= games.__len__():
         response['status'] = 'bad'
@@ -94,24 +85,24 @@ async def play_handler(request):
     if player != 1 and player != 2:
         response['status'] = 'bad'
         response['message'] = 'player must be 1 or 2'
-        return web.Response(status=422, text=json.dumps(response, indent=4))
+        return web.Response(status=200, text=json.dumps(response, indent=4))
 
     game = games[game_id]
 
     if game.winner is not None:
         response['status'] = 'bad'
         response['message'] = 'game was already finished'
-        return web.Response(status=403, text=json.dumps(response, indent=4))
+        return web.Response(status=200, text=json.dumps(response, indent=4))
 
     if player != game.next:
         response['status'] = 'bad'
         response['message'] = 'it is not your turn yet'
-        return web.Response(status=403, text=json.dumps(response, indent=4))
+        return web.Response(status=200, text=json.dumps(response, indent=4))
 
     if game.board[x][y] != 0:
         response['status'] = 'bad'
         response['message'] = 'bad request, box is already taken'
-        return web.Response(status=403, text=json.dumps(response, indent=4))
+        return web.Response(status=200, text=json.dumps(response, indent=4))
 
     response['status'] = 'ok'
     game.board[x][y] = player
@@ -133,7 +124,7 @@ async def list_handler(request):
     games_list = []
 
     for game in games:
-        if not game.are_all_boxes_filled():
+        if game.available_for_list():
             tmp_game = {}
             tmp_game['id'] = game.id
             tmp_game['name'] = game.name
@@ -142,14 +133,7 @@ async def list_handler(request):
     return web.Response(status=200, text=json.dumps(games_list, indent=4))
 
 
-@asyncio.coroutine
-async def bad_handler(request):
-    if request.method == 'POST':
-        return web.Response(status=405)
-    return web.Response(status=404)
-
 def main():
-    # logging.basicConfig(level=logging.DEBUG)
     global PORT
     PORT = int(sys.argv[1])
 
@@ -161,8 +145,6 @@ def main():
     my_server.router.add_route('GET', '/status{tail:.*}', status_handler)
     my_server.router.add_route('GET', '/play{tail:.*}', play_handler)
     my_server.router.add_route('GET', '/list{tail:.*}', list_handler)
-    my_server.router.add_route('GET', '/{tail:.*}', bad_handler)
-    my_server.router.add_route('POST', '/{tail:.*}', bad_handler)
     web.run_app(my_server, host='localhost', port=PORT)
 
 
